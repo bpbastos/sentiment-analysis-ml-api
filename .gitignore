@@ -21,6 +21,7 @@ sdist/
 var/
 wheels/
 results/
+nltk_data/
 logs/
 0.21.0
 share/python-wheels/

@@ -10,32 +10,13 @@ import re
 
 
 # Instanciando o objeto OpenAPI
-info = Info(title="Minha API", version="1.0.0")
+info = Info(title="Análise de sentimentos para avaliação de aplicativos - API", version="1.0.0")
 app = OpenAPI(__name__, info=info)
 CORS(app)
 
 # Definindo tags para agrupamento das rotas
 home_tag = Tag(name="Documentação", description="Seleção de documentação: Swagger, Redoc ou RapiDoc")
 review_tag = Tag(name="Review", description="Adição, visualização, remoção e análise de sentimentos de avaliações de aplicativos.")
-
-def sanitize_input(input_data):
-    """
-    Sanitiza os dados de entrada para prevenir SQL Injection e escapar caracteres especiais.
-    
-    Args:
-        input_data (str): Os dados de entrada a serem sanitizados.
-        
-    Returns:
-        str: Os dados de entrada sanitizados.
-    """
-    if isinstance(input_data, str):
-        # Remove quaisquer caracteres especiais de SQL
-        sanitized_data = re.sub(r"[;'\"]", "", input_data)
-        # Escapa quaisquer caracteres especiais restantes
-        sanitized_data = re.escape(sanitized_data)
-        return sanitized_data
-    return input_data
-
 
 # Rota home
 @app.get('/', tags=[home_tag])
@@ -54,11 +35,11 @@ def get_reviews(query: BuscaReviewSchema):
     #filtro condicional por titulo, id da tarefa e por id da categoria
     filtros = []
     if query.texto:
-        filtros.append(Review.texto.ilike(f'%{sanitize_input(query.texto)}%'))
+        filtros.append(Review.texto.ilike(f'%{query.texto}%'))
     if query.id:
-        filtros.append(Review.id == sanitize_input(query.id))    
+        filtros.append(Review.id == query.id)    
     if query.sentimento:
-        filtros.append(Review.sentimento == sanitize_input(query.sentimento))       
+        filtros.append(Review.sentimento == query.sentimento)       
 
 
     logger.debug("Coletando dados sobre todos os reviews")
@@ -72,6 +53,8 @@ def get_reviews(query: BuscaReviewSchema):
         return {"reviews": []}, 200
     else:
         logger.debug(f"%d reviews econtrados" % len(reviews))
+        # Dessanitiza os dados antes de exibir
+        #reviews = [review.texto for review in reviews]        
         print(reviews)
         return apresenta_reviews(reviews), 200
 
@@ -95,8 +78,7 @@ def predict(form: ReviewSchema):
     #texto = sanitize_input(form.texto)
     texto = form.texto        
     # Preparando os dados para o modelo
-    pre_processador = PreProcessador()
-    X_input = pre_processador.preparar_form(form)
+    X_input = PreProcessador().preparar_form(form)
     # Carregando modelo
     model_path = './machine-learning/pipelines/et_sentiment_pipeline.pkl'
     # modelo = Model.carrega_modelo(ml_path)
@@ -106,7 +88,8 @@ def predict(form: ReviewSchema):
     
     review = Review(
         texto=texto,
-        sentimento=sentimento
+        sentimento=sentimento,
+        model="scikit-learn-et"
     )
 
     logger.debug(f"Adicionando review : '{review.texto}'")
@@ -148,24 +131,22 @@ def delete_review(query: ReviewDelSchema):
         msg: Mensagem de sucesso ou erro
     """
     
-    review_id = sanitize_input(query.id)
-    logger.debug(f"Deletando dados do review #{review_id}")
-    
+
     # Criando conexão com a base
     session = Session()
     
     # Buscando review
-    review = session.query(Review).filter(Review.id == review_id).first()
+    review = session.query(Review).filter(Review.uid == query.id).first()
     
     if not review:
         error_msg = "Review não encontrado na base :/"
-        logger.warning(f"Erro ao deletar review '{review_id}', {error_msg}")
+        logger.warning(f"Erro ao deletar review '{query.id}', {error_msg}")
         return {"message": error_msg}, 404
     else:
-        session.delete(review_id)
+        session.delete(review)
         session.commit()
-        logger.debug(f"Deletado review #{review_id}")
-        return {"message": f"Review {review_id} removido com sucesso!"}, 200
+        logger.debug(f"Deletado review #{query.id}")
+        return {"message": f"Review {query.id} removido com sucesso!"}, 200
     
 if __name__ == '__main__':
     app.run(debug=True)

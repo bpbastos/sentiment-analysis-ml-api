@@ -45,7 +45,8 @@ class PreProcessador:
         texto = self.__clean_text(form.texto)
 
         # Carrega o vetorizador
-        vectorizer = pickle.load(open('./machine-learning/vectorizer/count_vectorizer.pkl', 'rb'))
+        with open('./machine-learning/vectorizer/count_vectorizer.pkl', 'rb') as file:
+            vectorizer = pickle.load(file)
 
         X_input = vectorizer.transform([texto])
         # Faremos o reshape para que o modelo entenda que estamos passando

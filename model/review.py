@@ -1,5 +1,6 @@
 from sqlalchemy import Column, String, Integer, DateTime
 from datetime import datetime
+import uuid
 
 from  model import Base
 
@@ -9,11 +10,13 @@ class Review(Base):
     __tablename__ = 'reviews'
     
     id = Column(Integer, primary_key=True)
-    texto = Column("texto", String(250))
-    sentimento = Column("sentimento", Integer)
+    uid = Column(String, nullable=False, default=lambda: str(uuid.uuid4()))
+    texto = Column("texto", String(250), nullable=False)
+    sentimento = Column("sentimento", Integer, nullable=False)
+    model = Column(String, nullable=False)
     data_insercao = Column(DateTime, default=datetime.now(), nullable=False)
     
-    def __init__(self, texto:str, sentimento:str): 
+    def __init__(self, texto:str, sentimento:str, model:str): 
         """
         Cria um Review
 
@@ -22,5 +25,7 @@ class Review(Base):
         sentimento: emoção expressa no texto do review
         data_insercao: data de quando o review foi inserido à base
         """
+        self.uid = str(uuid.uuid4())
         self.texto = texto
         self.sentimento = sentimento
+        self.model = "scikit-learn-et"

@@ -10,6 +10,7 @@ class ReviewSchema(BaseModel):
 class ReviewViewSchema(BaseModel):
     """Define como um review será retornado
     """
+    id: str = "c303282d-f2e6-46ca-a04a-35d3d873712d"
     texto: str = "Excelente app! A entrega foi super rápida, e a comida chegou quentinha. Adorei a variedade de restaurantes disponíveis. Super recomendo para quem gosta de praticidade!"
     sentimento: int = 1
     
@@ -21,14 +22,14 @@ class ListaReviewsSchema(BaseModel):
 class BuscaReviewSchema(BaseModel):
     """ Define como representação dos parametros de busca do Review
     """
-    id:Optional[int] = None
+    id:Optional[str] = None
     texto: Optional[str] = None
     sentimento: Optional[int] = None
     
 class ReviewDelSchema(BaseModel):
     """Define como um review para deleção será representado
     """
-    id:int = None
+    id:str = None
     
 # Apresenta apenas os dados de um paciente    
 def apresenta_review(review: Review):
@@ -36,9 +37,10 @@ def apresenta_review(review: Review):
         ReviewViewSchema.
     """
     return {
-        "id": review.id,
+        "id": review.uid,
         "texto": review.texto,
-        "setimento": review.sentimento
+        "setimento": review.sentimento,
+        "modelo": review.model        
     }
     
 # Apresenta uma lista de pacientes
@@ -49,9 +51,10 @@ def apresenta_reviews(reviews: List[Review]):
     result = []
     for review in reviews:
         result.append({
-            "id": review.id,
+            "id": review.uid,
             "texto": review.texto,
             "sentimento": review.sentimento,
+            "modelo": review.model
         })
 
     return {"reviews": result}

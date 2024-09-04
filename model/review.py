@@ -1,3 +1,4 @@
+from model.modelo import TipoModelo
 from sqlalchemy import Column, String, Integer, DateTime
 from datetime import datetime
 import uuid
@@ -13,10 +14,10 @@ class Review(Base):
     uid = Column(String, nullable=False, default=lambda: str(uuid.uuid4()))
     texto = Column("texto", String(250), nullable=False)
     sentimento = Column("sentimento", Integer, nullable=False)
-    model = Column(String, nullable=False)
+    modelo =  Column(String, nullable=False)
     data_insercao = Column(DateTime, default=datetime.now(), nullable=False)
     
-    def __init__(self, texto:str, sentimento:str, model:str): 
+    def __init__(self, texto:str, sentimento:str, modelo:str): 
         """
         Cria um Review
 
@@ -28,4 +29,4 @@ class Review(Base):
         self.uid = str(uuid.uuid4())
         self.texto = texto
         self.sentimento = sentimento
-        self.model = "scikit-learn-et"
+        self.modelo = modelo

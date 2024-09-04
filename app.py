@@ -72,24 +72,35 @@ def predict(form: ReviewSchema):
     Returns:
         dict: representação do review com o tom emocional do texto (sentimento)
     """
-    # TODO: Instanciar classes
 
     # Recuperando os dados do formulário
-    #texto = sanitize_input(form.texto)
     texto = form.texto        
-    # Preparando os dados para o modelo
-    X_input = PreProcessador().preparar_form(form)
-    # Carregando modelo
+
+    # Informações do modelo 
     model_path = './machine-learning/pipelines/et_sentiment_pipeline.pkl'
-    # modelo = Model.carrega_modelo(ml_path)
-    modelo = Pipeline.carrega_pipeline(model_path)
+    tokenizer_path = './machine-learning/vectorizer/count_vectorizer.pkl'
+    scaler_path = './machine-learning/scalers/maxabs_scaler_sentiment.pkl'
+    tipo_modelo = TipoModelo.PIPELINE_SCIKIT_LEARN
+         
+    #model_path = './machine-learning/models/tf_sentiment_classifier/'
+    #tokenizer_path = './machine-learning/models/tf_sentiment_classifier/'
+    #tipo_modelo = TipoModelo.MODEL_TRANSFORMERS
+    #scaler_path = None
+
+    # Preparando os dados para o modelo
+    preprocessador = PreProcessadorFactory.cria_preprocessador(tipo_modelo, tokenizer_path, scaler_path)    
+    X_input = preprocessador.preparar_texto(texto)
+    
+    # Carregando modelo Transformers
+    model = ModelFactory.cria_modelo(tipo_modelo, model_path)
+
     # Realizando a predição
-    sentimento = int(Model.preditor(modelo, X_input)[0])
+    sentimento = int(model.realizar_predicao(X_input)[0])
     
     review = Review(
         texto=texto,
         sentimento=sentimento,
-        model="scikit-learn-et"
+        modelo=tipo_modelo
     )
 
     logger.debug(f"Adicionando review : '{review.texto}'")

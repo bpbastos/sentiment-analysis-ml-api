@@ -40,7 +40,7 @@ def apresenta_review(review: Review):
         "id": review.uid,
         "texto": review.texto,
         "setimento": review.sentimento,
-        "modelo": review.model        
+        "modelo": review.modelo        
     }
     
 # Apresenta uma lista de pacientes
@@ -54,7 +54,7 @@ def apresenta_reviews(reviews: List[Review]):
             "id": review.uid,
             "texto": review.texto,
             "sentimento": review.sentimento,
-            "modelo": review.model
+            "modelo": review.modelo
         })
 
     return {"reviews": result}

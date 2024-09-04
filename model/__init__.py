@@ -7,8 +7,15 @@ import os
 from model.base import Base
 from model.review import Review
 from model.modelo import Model
-from model.pipeline import Pipeline
+from model.modelo import TipoModelo
+from model.modelo import ModelFactory
+from model.modelo import ModelSciKitLearn
+from model.modelo import ModelTransformers
+from model.modelo import PipelineSciKitLearn
 from model.preprocessador import PreProcessador
+from model.preprocessador import PreProcessadorFactory
+from model.preprocessador import PreProcessadorScikitLearn
+from model.preprocessador import PreProcessadorTransformers
 from model.avaliador import Avaliador
 from model.carregador import Carregador
 

@@ -1,12 +1,11 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from model.review import Review
 
 class ReviewSchema(BaseModel):
     """ Define como um novo review a ser inserido deve ser representado
     """
     texto: str = "Excelente app! A entrega foi super rápida, e a comida chegou quentinha. Adorei a variedade de restaurantes disponíveis. Super recomendo para quem gosta de praticidade!"
-    sentimento: int = 1
     
 class ReviewViewSchema(BaseModel):
     """Define como um review será retornado
@@ -19,6 +18,12 @@ class ListaReviewsSchema(BaseModel):
     """
     reviews: List[ReviewViewSchema]
 
+class BuscaReviewSchema(BaseModel):
+    """ Define como representação dos parametros de busca do Review
+    """
+    id:Optional[int] = None
+    texto: Optional[str] = None
+    sentimento: Optional[int] = None
     
 class ReviewDelSchema(BaseModel):
     """Define como um review para deleção será representado

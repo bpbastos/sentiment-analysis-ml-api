@@ -5,6 +5,7 @@ from model.review import Review
 class ReviewSchema(BaseModel):
     """ Define como um novo review a ser inserido deve ser representado
     """
+    modelo: str = "pipeline-et"
     texto: str = "Excelente app! A entrega foi super rápida, e a comida chegou quentinha. Adorei a variedade de restaurantes disponíveis. Super recomendo para quem gosta de praticidade!"
     
 class ReviewViewSchema(BaseModel):
@@ -25,6 +26,7 @@ class BuscaReviewSchema(BaseModel):
     id:Optional[str] = None
     texto: Optional[str] = None
     sentimento: Optional[int] = None
+    modelo: Optional[str] = None
     
 class ReviewDelSchema(BaseModel):
     """Define como um review para deleção será representado

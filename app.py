@@ -40,8 +40,9 @@ def get_reviews(query: BuscaReviewSchema):
         filtros.append(Review.id == query.id)    
     if query.sentimento:
         filtros.append(Review.sentimento == query.sentimento)       
-
-
+    if query.modelo:
+        filtros.append(Review.modelo == query.modelo)       
+        
     logger.debug("Coletando dados sobre todos os reviews")
     # Criando conexão com a base
     session = Session()
@@ -74,25 +75,20 @@ def predict(form: ReviewSchema):
     """
 
     # Recuperando os dados do formulário
-    texto = form.texto        
+    texto = form.texto  
+    tipo_modelo = form.modelo
 
-    # Informações do modelo 
-    model_path = './machine-learning/pipelines/et_sentiment_pipeline.pkl'
-    tokenizer_path = './machine-learning/vectorizer/count_vectorizer.pkl'
-    scaler_path = './machine-learning/scalers/maxabs_scaler_sentiment.pkl'
-    tipo_modelo = TipoModelo.PIPELINE_SCIKIT_LEARN
-         
-    #model_path = './machine-learning/models/tf_sentiment_classifier/'
-    #tokenizer_path = './machine-learning/models/tf_sentiment_classifier/'
-    #tipo_modelo = TipoModelo.MODEL_TRANSFORMERS
-    #scaler_path = None
-
-    # Preparando os dados para o modelo
-    preprocessador = PreProcessadorFactory.cria_preprocessador(tipo_modelo, tokenizer_path, scaler_path)    
+    if tipo_modelo not in [TipoModelo.PIPELINE_SCIKIT_LEARN, TipoModelo.MODEL_SCIKIT_LEARN, TipoModelo.MODEL_TRANSFORMERS]:
+        error_msg = "Tipo de modelo não suportado"
+        logger.warning(f"Erro ao adicionar review '{texto}', {error_msg}")
+        return {"message": error_msg}, 400      
+    
+    # Vetorizando e limpando o texto
+    preprocessador = PreProcessadorFactory.cria_preprocessador(tipo_modelo)    
     X_input = preprocessador.preparar_texto(texto)
     
-    # Carregando modelo Transformers
-    model = ModelFactory.cria_modelo(tipo_modelo, model_path)
+    # Carregando modelo 
+    model = ModelFactory.cria_modelo(tipo_modelo)
 
     # Realizando a predição
     sentimento = int(model.realizar_predicao(X_input)[0])
@@ -110,23 +106,23 @@ def predict(form: ReviewSchema):
         session = Session()
         
         # Checando se review já existe na base
-        if session.query(Review).filter(Review.texto == form.texto).first():
-            error_msg = "Review já existente na base :/"
-            logger.warning(f"Erro ao adicionar review '{review.texto}', {error_msg}")
-            return {"message": error_msg}, 409
+        #if session.query(Review).filter(Review.texto == form.texto).first():
+        #    error_msg = "Review já existente na base :/"
+        #    logger.warning(f"Erro ao adicionar review '{review.texto}', {error_msg}")
+        #    return {"message": error_msg}, 409
         
         # Adicionando review
         session.add(review)
         # Efetivando o comando de adição
         session.commit()
         # Concluindo a transação
-        logger.debug(f"Adicionado review: '{review.texto}'")
+        logger.debug(f"Adicionado review: '{review.uid}'")
         return apresenta_review(review), 200
     
     # Caso ocorra algum erro na adição
     except Exception as e:
         error_msg = "Não foi possível salvar novo review :/"
-        logger.warning(f"Erro ao adicionar review '{review.texto}', {error_msg}")
+        logger.warning(f"Erro ao adicionar review '{review.uid}', {error_msg}")
         return {"message": error_msg}, 400
     
     

@@ -51,22 +51,22 @@ class PreProcessador:
 
 class PreProcessadorFactory:
     @staticmethod
-    def cria_preprocessador(tipo_modelo: str, tokenizer_path:str, scaler_path:str) -> PreProcessador:
+    def cria_preprocessador(tipo_modelo: str) -> PreProcessador:
         if tipo_modelo == TipoModelo.MODEL_SCIKIT_LEARN or tipo_modelo == TipoModelo.PIPELINE_SCIKIT_LEARN:
-            return PreProcessadorScikitLearn(tokenizer_path=tokenizer_path, scaler_path=scaler_path)
+            return PreProcessadorScikitLearn()
         elif tipo_modelo == TipoModelo.MODEL_TRANSFORMERS:
-            return PreProcessadorTransformers(tokenizer_path=tokenizer_path)
+            return PreProcessadorTransformers()
         else:
             raise ValueError(f"Tipo de modelo desconhecido: {tipo_modelo}")
         
 class PreProcessadorTransformers(PreProcessador):
     """ Classe para cuidar do pré-processamento dos dados. """
-    def __init__(self, tokenizer_path:str):
+    def __init__(self):
 
-        super().__init__(tokenizer_path, None)
+        super().__init__('./machine-learning/models/tf_sentiment_classifier/', None)
 
         # Carrega o tokenizer
-        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
+        self.tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_path)
 
         if self.tokenizer is None:
             raise Exception('Vetorizador não encontrado')          
@@ -82,9 +82,9 @@ class PreProcessadorTransformers(PreProcessador):
 class PreProcessadorScikitLearn(PreProcessador):
     """ Classe para cuidar do pré-processamento dos dados. """
     npl = None
-    def __init__(self, tokenizer_path:str, scaler_path:str):
+    def __init__(self):
 
-        super().__init__(tokenizer_path, scaler_path)
+        super().__init__('./machine-learning/vectorizer/count_vectorizer.pkl', './machine-learning/scalers/maxabs_scaler_sentiment.pkl')
 
         # Carrega o vetorizador
         with open(self.tokenizer_path, 'rb') as file:

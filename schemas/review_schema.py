@@ -51,15 +51,6 @@ def apresenta_reviews(reviews: List[Review]):
     """ Retorna uma representação do review seguindo o schema definido em
         ReviewViewSchema.
     """
-    result = []
-    for review in reviews:
-        result.append({
-            "id": review.uid,
-            "texto": review.texto,
-            "sentimento": review.sentimento,
-            "modelo": review.modelo,
-            "data_criacao": review.data_criacao.strftime("%d/%m/%Y %H:%M:%S")                  
-        })
-
+    result = [apresenta_review(review) for review in reviews]
     return {"reviews": result}
 

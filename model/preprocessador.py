@@ -4,6 +4,8 @@ import pickle
 import spacy
 import re
 from abc import abstractmethod
+import numpy as np
+import pandas as pd
 
 from model.modelo import TipoModelo
 
@@ -19,7 +21,7 @@ class PreProcessador:
         self.scaler_path = scaler_path
 
     @abstractmethod
-    def preparar_texto(self, texto):
+    def preparar_textos(self, textos):
         """ Prepara os dados recebidos do front para serem usados no modelo. """
         pass
 
@@ -28,26 +30,12 @@ class PreProcessador:
         """ Normaliza os dados. """
         pass
 
-    def __preparar_holdout(self, dataset, percentual_teste, seed):
-        """ Divide os dados em treino e teste usando o método holdout.
-        Assume que a variável target está na última coluna.
-        O parâmetro test_size é o percentual de dados de teste.
-        """
-        dados = dataset.values
-        X = dados[:, 0:-1]
-        Y = dados[:, -1]
-        return train_test_split(X, Y, test_size=percentual_teste, random_state=seed)  
-    
-    def separa_teste_treino(self, dataset, percentual_teste, seed=7):
-        """ Cuida de todo o pré-processamento. """
+    @abstractmethod
+    def separa_teste_treino(X, y, percentual_teste, seed=7):
+        """ Separa os dados em treino e teste. """
         # divisão em treino e teste
-        X_train, X_test, Y_train, Y_test = self.__preparar_holdout(dataset,
-                                                                  percentual_teste,
-                                                                  seed)
-        # normalização/padronização
-        
-        return (X_train, X_test, Y_train, Y_test)
-
+        return train_test_split(X, y, test_size=percentual_teste, shuffle=True, random_state=seed, stratify=y)  # holdout com estratificação
+    
 
 class PreProcessadorFactory:
     @staticmethod
@@ -71,9 +59,17 @@ class PreProcessadorTransformers(PreProcessador):
         if self.tokenizer is None:
             raise Exception('Vetorizador não encontrado')          
 
-    def preparar_texto(self, texto):
+    def preparar_textos(self, textos):
         """ Prepara os dados recebidos do front para serem usados no modelo. """
-        X_input = self.tokenizer([texto], max_length=40, add_special_tokens=True, truncation=True, padding='max_length', return_attention_mask=True, return_tensors='pt')
+
+        if isinstance(textos, pd.Series):
+            textos = textos.tolist()
+        elif isinstance(textos, str):
+            textos = [textos]
+        elif not isinstance(textos, list):
+            raise ValueError('Tipo de dado inválido. Esperado str, list ou pd.Series.')
+                
+        X_input = self.tokenizer(textos, max_length=40, add_special_tokens=True, truncation=True, padding='max_length', return_attention_mask=True, return_tensors='pt')
         return  X_input
 
     def scaler(self, X_train):
@@ -129,13 +125,17 @@ class PreProcessadorScikitLearn(PreProcessador):
         cleaned_text = ' '.join([token.lemma_ for token in doc if not token.is_stop and not token.is_punct])
         return cleaned_text   
       
-    
-    def preparar_texto(self, texto):
+    def preparar_textos(self, textos):
         """ Prepara os dados recebidos do front para serem usados no modelo. """
-        texto = self.__clean_text(texto)
-        # Vetoriza o texto
-        X_input = self.tokenizer.transform([texto])
-        return X_input
+        textos_limpos = []
+        if isinstance(textos, (list, np.ndarray)):
+            textos_limpos= [self.__clean_text(texto) for texto in textos]
+        elif isinstance(textos, str):
+           textos_limpos = [self.__clean_text(textos)]   
+        else:
+            raise ValueError('Tipo de dado inválido')   
+
+        return self.tokenizer.transform(textos_limpos)
        
     def scaler(self, X_train):
         """ Normaliza os dados. """

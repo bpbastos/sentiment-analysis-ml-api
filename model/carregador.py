@@ -2,12 +2,23 @@ import pandas as pd
 
 class Carregador:
 
-    def carregar_dados(url: str, atributos: list):
+    def __to_sentiment(rating) -> int:
+        rating = int(rating)
+        if rating <= 2:
+            return 0
+        elif rating > 3:
+            return 1    
+
+    @staticmethod
+    def carregar_dados(url: str) -> pd.DataFrame:
         """ Carrega e retorna um DataFrame. Há diversos parâmetros 
         no read_csv que poderiam ser utilizados para dar opções 
         adicionais.
         """
-        
-        return pd.read_csv(url, names=atributos, header=0, 
-                           skiprows=0, delimiter=',') # Esses dois parâmetros são próprios para uso deste dataset. Talvez você não precise utilizar
-    
+        # Carregando os dados
+        dt = pd.read_csv(url, delimiter=',', encoding='utf-8')
+        # Desprezando os comentários com score 3 (neutro)
+        dt = dt[dt['score'] != 3]
+        dt['sentiment'] = dt['score'].apply(Carregador.__to_sentiment)
+
+        return dt[['content', 'sentiment']]

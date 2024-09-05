@@ -82,7 +82,7 @@ def predict(form: ReviewSchema):
     
     # Vetorizando e limpando o texto
     preprocessador = PreProcessadorFactory.cria_preprocessador(tipo_modelo)    
-    X_input = preprocessador.preparar_texto(texto)
+    X_input = preprocessador.preparar_textos(texto)
     
     # Carregando modelo 
     model = ModelFactory.cria_modelo(tipo_modelo)

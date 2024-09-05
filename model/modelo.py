@@ -2,6 +2,7 @@ import pickle
 import numpy as np
 from abc import abstractmethod
 from transformers import AutoModelForSequenceClassification
+import torch
 
 class TipoModelo:
     PIPELINE_SCIKIT_LEARN = "pipeline-et"
@@ -29,7 +30,7 @@ class ModelFactory:
         if tipo_modelo == TipoModelo.MODEL_SCIKIT_LEARN:
             return ModelSciKitLearn()
         elif tipo_modelo == TipoModelo.MODEL_TRANSFORMERS:
-            return ModelTransformers('cpu')
+            return ModelTransformers()
         elif tipo_modelo == TipoModelo.PIPELINE_SCIKIT_LEARN:
             return PipelineSciKitLearn()
         else:
@@ -58,6 +59,7 @@ class PipelineSciKitLearn(Model):
         return sentimento
         
 class ModelSciKitLearn(Model):
+
     def __init__(self):
         super().__init__('./machine-learning/models/et_sentiment_classifier.pkl')
     
@@ -80,27 +82,37 @@ class ModelSciKitLearn(Model):
         return sentimento
     
 class ModelTransformers(Model):
-    device = None
-    def __init__(self, device):
+    device:str = None
+    def __init__(self):
         super().__init__('./machine-learning/models/tf_sentiment_classifier/')
-        self.device =  device
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu") 
     
     def carrega_modelo(self):
-        """Carrega o modelo pré-treinado
-        """
-        model = None
-
+        """Carrega o modelo pré-treinado"""
         if self.model is None:
-            model = AutoModelForSequenceClassification.from_pretrained(self.path)
+            self.model = AutoModelForSequenceClassification.from_pretrained(self.path)
         else:
-            model = self.model
-
-        return model
+            raise ValueError(f"Não foi possível carregar o modelo do caminho {self.path}")
+        
+        return self.model
     
     def realizar_predicao(self, X_input):
-        """Realiza a análise de sentimento com base no modelo treinado
-        """
+        """Realiza a análise de sentimento com base no modelo treinado"""
+
+        # Mover os tensores de entrada para o dispositivo (GPU/CPU)
+        self.model.to(self.device)
+        self.model.eval()        
         inputs = {key: value.to(self.device) for key, value in X_input.items()}
-        outputs = self.model(**inputs)
-        predictions = np.argmax(outputs.logits.detach().cpu().numpy(), axis=-1)
+        
+        # Desabilitar o cálculo de gradientes, pois estamos apenas fazendo predições
+
+        with torch.no_grad():
+            outputs = self.model(**inputs)
+
+        # Movendo os logits para a CPU antes de convertê-los para NumPy
+        logits_cpu = outputs.logits.detach().cpu().numpy()
+        
+        # Realizando a predição
+        predictions = np.argmax(logits_cpu, axis=-1)
+
         return predictions

@@ -15,7 +15,7 @@ class Review(Base):
     texto = Column("texto", String(250), nullable=False)
     sentimento = Column("sentimento", Integer, nullable=False)
     modelo =  Column(String, nullable=False)
-    data_insercao = Column(DateTime, default=datetime.now(), nullable=False)
+    data_criacao = Column(DateTime, default=datetime.now(), nullable=False)
     
     def __init__(self, texto:str, sentimento:str, modelo:str): 
         """

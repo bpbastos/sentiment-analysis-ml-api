@@ -42,7 +42,8 @@ def apresenta_review(review: Review):
         "id": review.uid,
         "texto": review.texto,
         "setimento": review.sentimento,
-        "modelo": review.modelo        
+        "modelo": review.modelo,  
+        "data_criacao": review.data_criacao.strftime("%d/%m/%Y %H:%M:%S")    
     }
     
 # Apresenta uma lista de pacientes
@@ -56,7 +57,8 @@ def apresenta_reviews(reviews: List[Review]):
             "id": review.uid,
             "texto": review.texto,
             "sentimento": review.sentimento,
-            "modelo": review.modelo
+            "modelo": review.modelo,
+            "data_criacao": review.data_criacao.strftime("%d/%m/%Y %H:%M:%S")                  
         })
 
     return {"reviews": result}

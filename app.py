@@ -32,12 +32,12 @@ def get_reviews(query: BuscaReviewSchema):
     """Faz a busca por todos os reviews ou filtra dependendo dos parametros passados
     Retorna uma representação da listagem de reviews.
     """     
-    #filtro condicional por titulo, id da tarefa e por id da categoria
+    #filtro condicional por id,texto,sentimento e modelo do review 
     filtros = []
-    if query.texto:
-        filtros.append(Review.texto.ilike(f'%{query.texto}%'))
     if query.id:
         filtros.append(Review.id == query.id)    
+    if query.texto:
+        filtros.append(Review.texto.ilike(f'%{query.texto}%'))
     if query.sentimento:
         filtros.append(Review.sentimento == query.sentimento)       
     if query.modelo:
@@ -54,9 +54,6 @@ def get_reviews(query: BuscaReviewSchema):
         return {"reviews": []}, 200
     else:
         logger.debug(f"%d reviews econtrados" % len(reviews))
-        # Dessanitiza os dados antes de exibir
-        #reviews = [review.texto for review in reviews]        
-        print(reviews)
         return apresenta_reviews(reviews), 200
 
 
@@ -80,7 +77,7 @@ def predict(form: ReviewSchema):
 
     if tipo_modelo not in [TipoModelo.PIPELINE_SCIKIT_LEARN, TipoModelo.MODEL_SCIKIT_LEARN, TipoModelo.MODEL_TRANSFORMERS]:
         error_msg = "Tipo de modelo não suportado"
-        logger.warning(f"Erro ao adicionar review '{texto}', {error_msg}")
+        logger.warning(f"Erro ao selecionar o tipo de modelo do review '{tipo_modelo}', {error_msg}")
         return {"message": error_msg}, 400      
     
     # Vetorizando e limpando o texto
@@ -106,10 +103,13 @@ def predict(form: ReviewSchema):
         session = Session()
         
         # Checando se review já existe na base
-        #if session.query(Review).filter(Review.texto == form.texto).first():
-        #    error_msg = "Review já existente na base :/"
-        #    logger.warning(f"Erro ao adicionar review '{review.texto}', {error_msg}")
-        #    return {"message": error_msg}, 409
+        filtros = []
+        filtros.append(Review.texto == texto)
+        filtros.append(Review.modelo == tipo_modelo)
+        if session.query(Review).filter(*filtros).first():
+            error_msg = "Review já existente na base :/"
+            logger.warning(f"Erro ao adicionar review '{review.texto}', {error_msg}")
+            return {"message": error_msg}, 409
         
         # Adicionando review
         session.add(review)

@@ -1,10 +1,12 @@
 from flask_openapi3 import OpenAPI, Info, Tag
-from flask import redirect
+from flask import redirect, jsonify
 
 from model import *
 from logger import logger
 from schemas import *
 from flask_cors import CORS
+from sqlalchemy import desc
+from datetime import datetime
 
 # Instanciando o objeto OpenAPI
 info = Info(title="API de Análise de sentimentos em textos.", version="1.0.0")
@@ -44,25 +46,28 @@ def get_reviews(query: BuscaReviewSchema):
     # Criando conexão com a base
     session = Session()
     # Buscando todos os reviews utilizando filtros, se informados.
-    reviews = session.query(Review).filter(*filtros).all() 
+    reviews = session.query(Review).filter(*filtros).order_by(desc(Review.data_criacao)).all() 
+    # Fechando a conexão
+    session.close()
     
     if not reviews:
         # Se não houver reviews, retorna uma lista vazia
-        return {"reviews": []}, 200
+        return {}, 200
     else:
         logger.debug(f"%d reviews econtrados" % len(reviews))
-        return apresenta_reviews(reviews), 200
+        return jsonify(apresenta_reviews(reviews)), 200
 
 
 # Rota de adição de review
 @app.post('/review', tags=[review_tag],
-          responses={"200": ReviewSchema, "400": ErrorSchema, "409": ErrorSchema})
-def predict(form: ReviewSchema):
+          responses={"200": ReviewSchema, "400": ErrorSchema})
+def add_review(form: ReviewSchema):
     """Adiciona um novo review à base de dados
     Retorna o tom emocional associado ao texto (sentimento).
     
     Args:
         texto (str): texto do review
+        modelo (str): tipo de modelo a ser utilizado para análise de sentimento
         
     Returns:
         dict: representação do review com o tom emocional do texto (sentimento)
@@ -75,7 +80,12 @@ def predict(form: ReviewSchema):
     if tipo_modelo not in [TipoModelo.PIPELINE_SCIKIT_LEARN, TipoModelo.MODEL_SCIKIT_LEARN, TipoModelo.MODEL_TRANSFORMERS]:
         error_msg = "Tipo de modelo não suportado"
         logger.warning(f"Erro ao selecionar o tipo de modelo do review '{tipo_modelo}', {error_msg}")
-        return {"message": error_msg}, 400      
+        return {"error": error_msg}, 200  
+    
+    if not texto:
+        error_msg = "Texto do review não informado"
+        logger.warning(f"Erro ao adicionar review '{texto}', {error_msg}")
+        return {"error": error_msg}, 200    
     
     # Vetorizando e limpando o texto
     preprocessador = PreProcessadorFactory.cria_preprocessador(tipo_modelo)    
@@ -90,7 +100,8 @@ def predict(form: ReviewSchema):
     review = Review(
         texto=texto,
         sentimento=sentimento,
-        modelo=tipo_modelo
+        modelo=tipo_modelo,
+        data_criacao=datetime.now()
     )
 
     logger.debug(f"Adicionando review : '{review.texto}'")
@@ -106,7 +117,7 @@ def predict(form: ReviewSchema):
         if session.query(Review).filter(*filtros).first():
             error_msg = "Review já existente na base :/"
             logger.warning(f"Erro ao adicionar review '{review.texto}', {error_msg}")
-            return {"message": error_msg}, 409
+            return {"error": error_msg}, 200
         
         # Adicionando review
         session.add(review)
@@ -114,13 +125,17 @@ def predict(form: ReviewSchema):
         session.commit()
         # Concluindo a transação
         logger.debug(f"Adicionado review: '{review.uid}'")
-        return apresenta_review(review), 200
+        return jsonify(apresenta_review(review)), 200
     
     # Caso ocorra algum erro na adição
     except Exception as e:
         error_msg = "Não foi possível salvar novo review :/"
         logger.warning(f"Erro ao adicionar review '{review.uid}', {error_msg}")
-        return {"message": error_msg}, 400
+        return {"error": error_msg}, 200
+    
+    finally:
+        # Fechando a conexão
+        session.close()
     
     
 # Rota de remoção de review por nome
@@ -145,10 +160,11 @@ def delete_review(query: ReviewDelSchema):
     if not review:
         error_msg = "Review não encontrado na base :/"
         logger.warning(f"Erro ao deletar review '{query.id}', {error_msg}")
-        return {"message": error_msg}, 404
+        return {"error": error_msg}, 200
     else:
         session.delete(review)
         session.commit()
+        session.close()
         logger.debug(f"Deletado review #{query.id}")
         return {"message": f"Review {query.id} removido com sucesso!"}, 200
     

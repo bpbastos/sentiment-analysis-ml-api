@@ -17,7 +17,7 @@ class Review(Base):
     modelo =  Column(String, nullable=False)
     data_criacao = Column(DateTime, default=datetime.now(), nullable=False)
     
-    def __init__(self, texto:str, sentimento:str, modelo:str): 
+    def __init__(self, texto:str, sentimento:str, modelo:str, data_criacao:datetime = datetime.now()): 
         """
         Cria um Review
 
@@ -30,3 +30,4 @@ class Review(Base):
         self.texto = texto
         self.sentimento = sentimento
         self.modelo = modelo
+        self.data_criacao = data_criacao

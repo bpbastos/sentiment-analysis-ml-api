@@ -6,17 +6,14 @@ from logger import logger
 from schemas import *
 from flask_cors import CORS
 
-import re
-
-
 # Instanciando o objeto OpenAPI
-info = Info(title="Análise de sentimentos para avaliação de aplicativos - API", version="1.0.0")
+info = Info(title="API de Análise de sentimentos em textos.", version="1.0.0")
 app = OpenAPI(__name__, info=info)
 CORS(app)
 
 # Definindo tags para agrupamento das rotas
 home_tag = Tag(name="Documentação", description="Seleção de documentação: Swagger, Redoc ou RapiDoc")
-review_tag = Tag(name="Review", description="Adição, visualização, remoção e análise de sentimentos de avaliações de aplicativos.")
+review_tag = Tag(name="Review", description="Adição, visualização, remoção e análise de sentimentos em textos.")
 
 # Rota home
 @app.get('/', tags=[home_tag])

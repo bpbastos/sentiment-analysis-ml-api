@@ -126,10 +126,10 @@ def predict(form: ReviewSchema):
 # Rota de remoção de review por nome
 @app.delete('/review', tags=[review_tag],responses={"200": ReviewDelSchema, "404": ErrorSchema})
 def delete_review(query: ReviewDelSchema):
-    """Remove um review cadastrado na base a partir do nome
+    """Remove um review cadastrado na base a partir do ID
 
     Args:
-        nome (str): nome do review
+        ID (str): nome do review
         
     Returns:
         msg: Mensagem de sucesso ou erro

@@ -59,6 +59,11 @@ Clone ou faça download do projeto :
 git clone https://github.com/bpbastos/sentiment-analysis-ml-api
 ```
 
+Acesse o diretório do projeto com:
+```
+cd sentiment-analysis-ml-api
+```
+
 Após clonar o repositório, será necessário fazer a instalação das dependencias da aplicação.
 > É fortemente indicado o uso de ambientes virtuais do tipo [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html).
 

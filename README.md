@@ -17,6 +17,11 @@
 
 > Esta API foi desenvolvida como uma parte do trabalho de conclusão do último módulo - Qualidade de Software, Segurança e Sistemas Inteligentes - da Pós-Graduação em Engenharia de Software da PUC-RIO. 
 
+## 🛠️ TODO
+
+- [ ] Implementar Autenticação OAuth 2.0
+- [ ] Implementar testes de integração
+
 ## 📋 Pré-requisitos
 
 Antes de começar, verifique se o seu ambiente atende aos seguintes requisitos:

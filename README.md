@@ -40,14 +40,19 @@ Acesse o diretório do projeto com:
 cd sentiment-analysis-ml-api
 ```
 
+Crie o diretório database:
+```
+mkdir database
+```
+
 Para construir a imagem docker do projeto, execute:
 ```sh
-docker build -t sentiment-analysis-ml-api:1.0 .
+docker build -t sentiment-analysis-api:1.0 .
 ```
 
 Para rodar o projeto, execute:
 ```sh
-docker run -d -p 5000:5000 --name data sentiment-analysis-ml-api:1.0 
+docker run -d -p 5000:5000 -v ./database/:/app/database -v ./log:/app/log --name api sentiment-analysis-api:1.0
 ```
 
 Abra o endereço http://localhost:5000 no seu navegador.
@@ -75,6 +80,7 @@ No terminal execute o comando descrito abaixo para executar a API:
 
 ```
 (env)$ flask run --host 0.0.0.0 --port 5000
+
 ```
 Abra o http://localhost:5000/#/ no navegador para verificar o status da API em execução.
 
@@ -83,7 +89,7 @@ Abra o http://localhost:5000/#/ no navegador para verificar o status da API em e
 No terminal execute o comando descrito abaixo para executar fazer os testes nos modelos/pipelines:
 
 ```
-(env)$ pytest
+(env)$ pytest -v
 ```
 
 

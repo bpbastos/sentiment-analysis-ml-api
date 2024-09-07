@@ -18,3 +18,4 @@ spacy
 transformers
 torch
 accelerate
+gunicorn

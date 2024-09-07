@@ -1,5 +1,6 @@
 from flask_openapi3 import OpenAPI, Info, Tag
 from flask import redirect, jsonify
+from flask import Flask
 
 from model import *
 from logger import logger
@@ -7,6 +8,8 @@ from schemas import *
 from flask_cors import CORS
 from sqlalchemy import desc
 from datetime import datetime
+
+app = Flask(__name__)
 
 # Instanciando o objeto OpenAPI
 info = Info(title="API de Análise de sentimentos em textos.", version="1.0.0")
@@ -169,4 +172,4 @@ def delete_review(query: ReviewDelSchema):
         return {"message": f"Review {query.id} removido com sucesso!"}, 200
     
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

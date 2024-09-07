@@ -32,7 +32,7 @@ def test_modelo_et():
 
 # Método para testar o pipeline do Extra Trees + Max Abs Scaler
 def test_pipeline_et():  
-    pp_et = PreProcessadorFactory.cria_preprocessador(TipoModelo.MODEL_SCIKIT_LEARN)
+    pp_et = PreProcessadorFactory.cria_preprocessador(TipoModelo.PIPELINE_SCIKIT_LEARN)
     pipeline_et = ModelFactory.cria_modelo(TipoModelo.PIPELINE_SCIKIT_LEARN)    
 
     X = dataset['content']
@@ -53,7 +53,6 @@ def test_pipeline_et():
 # Método para testar o modelo distilbert (deep learning) (!!!Tenha uma GPU disponível!!!)
 def test_modelo_tf():  
     model_tf = ModelFactory.cria_modelo(TipoModelo.MODEL_TRANSFORMERS)
-
     pp_model_tf = PreProcessadorFactory.cria_preprocessador(TipoModelo.MODEL_TRANSFORMERS)
 
     X = dataset['content']

@@ -47,12 +47,12 @@ mkdir database
 
 Para construir a imagem docker do projeto, execute:
 ```sh
-docker build -t sentiment-analysis-api:1.0 .
+docker compose build
 ```
 
 Para rodar o projeto, execute:
 ```sh
-docker run -d -p 5000:5000 -v ./database/:/app/database -v ./log:/app/log --name api sentiment-analysis-api:1.0
+docker compose up -d
 ```
 
 Abra o endereço http://localhost:5000 no seu navegador.

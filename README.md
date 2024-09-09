@@ -44,9 +44,9 @@ Acesse o diretório do projeto com:
 cd sentiment-analysis-ml-api
 ```
 
-Crie o diretório database:
+Crie o diretório database e log:
 ```
-mkdir database
+mkdir database log
 ```
 
 Para construir a imagem docker do projeto, execute:

@@ -80,6 +80,14 @@ Após clonar o repositório, será necessário fazer a instalação das dependen
 (env)$ pip install -r requirements.txt
 ```
 
+No terminal execute o comando descrito abaixo baixar as stop words spacy:
+
+```
+(env)$ python -m spacy download pt_core_news_sm
+
+```
+
+
 No terminal execute o comando descrito abaixo para executar a API:
 
 ```

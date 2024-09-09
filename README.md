@@ -32,6 +32,21 @@ Antes de começar, verifique se o seu ambiente atende aos seguintes requisitos:
 
 > Instalação do docker: https://docs.docker.com/engine/install/
 
+* Git Lfs
+  
+Primeiro instale o pacote git-fls:
+```
+sudo apt-get install git-lfs
+```
+
+Depois habilite usando o comando:
+```
+git lfs install
+```
+
+> Como os modelos ficaram maiores que 100mb foi necessario fazer uso do git lfs.
+
+
 ## 📦 Rodando com docker
 
 Faça clone do projeto:

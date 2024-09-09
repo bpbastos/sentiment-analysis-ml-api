@@ -13,7 +13,7 @@
 * Pandas e NumPy: Para manipulação de dados, análise e cálculos numéricos.
 * Matplotlib: Para visualização de resultados e métricas de desempenho.
 
-> Você pode acessar o Jupyter Notebook, responsável pela construção do modelo de análise de sentimentos em textos, que inclui toda a análise exploratória de dados, modelagem, treinamento e teste, clicando aqui: [SentimentAnalysis.ipynb](https://github.com/bpbastos/sentiment-analysis-ml-api/blob/main/machine-learning/notebooks/SentimentAnalysis.ipynb).
+> Você pode acessar o Jupyter Notebook, responsável pela construção do modelo de análise de sentimentos em textos, que inclui toda a modelagem, treinamento e teste, clicando aqui: [SentimentAnalysis.ipynb](https://github.com/bpbastos/sentiment-analysis-ml-api/blob/main/machine-learning/notebooks/SentimentAnalysis.ipynb).
 
 > Esta API foi desenvolvida como uma parte do trabalho de conclusão do último módulo - Qualidade de Software, Segurança e Sistemas Inteligentes - da Pós-Graduação em Engenharia de Software da PUC-RIO. 
 
@@ -26,8 +26,7 @@
 
 Antes de começar, verifique se o seu ambiente atende aos seguintes requisitos:
 
-> ATENÇÃO, este backend foi desenvolvido para rodar em conjunto com o frontend [Sentiment Analysis Frontend](https://github.com/bpbastos/sentiment-analysis-frontend).
- Recomendo seguir as instruções contidas no README do repositório de implantação [Sentiment Analysis Deploy](https://github.com/bpbastos/sentiment-analysis-deploy) para garantir uma configuração adequada.
+> ATENÇÃO, este backend foi desenvolvido para rodar em conjunto com o frontend [Sentiment Analysis Frontend](https://github.com/bpbastos/sentiment-analysis-frontend). 
 
 * `Docker`
 

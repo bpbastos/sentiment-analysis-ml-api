@@ -32,14 +32,14 @@ Antes de começar, verifique se o seu ambiente atende aos seguintes requisitos:
 
 > Instalação do docker: https://docs.docker.com/engine/install/
 
-* Git Lfs
+* `Git Lfs`
   
-Primeiro instale o pacote git-fls:
+`Primeiro instale o pacote git-fls:`
 ```
 sudo apt-get install git-lfs
 ```
 
-Depois habilite usando o comando:
+`Depois habilite usando o comando:`
 ```
 git lfs install
 ```

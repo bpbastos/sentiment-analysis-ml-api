@@ -84,7 +84,6 @@ No terminal execute o comando descrito abaixo baixar as stop words spacy:
 
 ```
 (env)$ python -m spacy download pt_core_news_sm
-
 ```
 
 

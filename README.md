@@ -26,7 +26,7 @@
 
 Antes de começar, verifique se o seu ambiente atende aos seguintes requisitos:
 
-> ATENÇÃO, este backend foi desenvolvido para rodar em conjunto com o frontend [Sentiment Analysis Frontend](https://github.com/bpbastos/sentiment-analysis-frontend). 
+> ATENÇÃO, este backend foi desenvolvido para rodar em conjunto com o frontend [Sentiment Analysis Frontend](https://github.com/bpbastos/sentiment-analysis-ml-front). 
 
 * `Docker`
 

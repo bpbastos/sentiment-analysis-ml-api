@@ -15,8 +15,6 @@
 
 > Você pode acessar o Jupyter Notebook, responsável pela construção do modelo de análise de sentimentos em textos, que inclui toda a modelagem, treinamento e teste, clicando aqui: [SentimentAnalysis.ipynb](https://github.com/bpbastos/sentiment-analysis-ml-api/blob/main/machine-learning/notebooks/SentimentAnalysis.ipynb).
 
-> Esta API foi desenvolvida como uma parte do trabalho de conclusão do último módulo - Qualidade de Software, Segurança e Sistemas Inteligentes - da Pós-Graduação em Engenharia de Software da PUC-RIO. 
-
 ## 🛠️ TODO
 
 - [ ] Implementar Autenticação OAuth 2.0

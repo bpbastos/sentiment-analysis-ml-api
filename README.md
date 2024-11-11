@@ -90,7 +90,7 @@ Após clonar o repositório, será necessário fazer a instalação das dependen
 > É fortemente indicado o uso de ambientes virtuais do tipo [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html).
 
 ```
-(env)$ pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 No terminal execute o comando descrito abaixo baixar as stop words spacy:

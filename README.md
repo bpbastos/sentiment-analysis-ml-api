@@ -96,14 +96,14 @@ Após clonar o repositório, será necessário fazer a instalação das dependen
 No terminal execute o comando descrito abaixo baixar as stop words spacy:
 
 ```
-(env)$ python -m spacy download pt_core_news_sm
+python -m spacy download pt_core_news_sm
 ```
 
 
 No terminal execute o comando descrito abaixo para executar a API:
 
 ```
-(env)$ flask run --host 0.0.0.0 --port 5000
+flask run --host 0.0.0.0 --port 5000
 
 ```
 Abra o http://localhost:5000/#/ no navegador para verificar o status da API em execução.
@@ -113,7 +113,7 @@ Abra o http://localhost:5000/#/ no navegador para verificar o status da API em e
 No terminal execute o comando descrito abaixo para executar fazer os testes nos modelos/pipelines:
 
 ```
-(env)$ pytest -v
+pytest -v
 ```
 
 
